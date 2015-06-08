@@ -1,0 +1,4 @@
+{
+ "name":"Lasana Murray",
+ "address":{"$ref":"address.json"}
+}

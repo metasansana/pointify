@@ -1,0 +1,31 @@
+{
+  "name": "refify",
+  "version": "0.0.1",
+  "description": "A browserify plugin for json pointer support.",
+  "main": "index.js",
+  "dependencies": {
+    "through": "^2.3.7",
+    "traverse": "^0.6.6"
+  },
+  "devDependencies": {
+    "browserify": "^9.0.8",
+    "mocha": "^2.2.5",
+    "must": "^0.12.0"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/mocha -R list --timeout 10000 test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/metasansana/refify.git"
+  },
+  "keywords": [
+    "browserify",
+    "$ref",
+    "json-pointer",
+    "json",
+    "rfc-6901",
+    "transform"
+  ],
+  "license": "MIT"
+}

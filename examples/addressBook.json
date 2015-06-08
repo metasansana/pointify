@@ -1,0 +1,9 @@
+{
+  "owner":"Shaina Purple",
+  "addresses":[
+    {"$ref":"address.json"},
+    {"$ref":"address.json"},
+    {"$ref":"address.json"}
+  ]
+}
+
