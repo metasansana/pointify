@@ -1,5 +1,5 @@
 {
-  "name": "refify",
+  "name": "pointify",
   "version": "0.0.1",
   "description": "A browserify plugin for json pointer support.",
   "main": "index.js",
