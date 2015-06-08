@@ -1,7 +1,6 @@
 ﻿var through = require('through');
 var traverse = require('traverse');
 var path = require('path');
-var ptr = require('json-ptr');
 
 function isJSON(file) {
 	return (/\.json$/).test(file);
