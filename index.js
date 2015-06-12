@@ -19,8 +19,18 @@ function pointify(file) {
 		data = JSON.parse(data);
 		traverse(data).
 		forEach(function(value) {
-			if (this.key === '$ref')
-				this.parent.update(require(wd + value));
+			if (this.key === '$ref') {
+				var update = JSON.parse(JSON.stringify(require(wd + value)));
+				var node = this.parent.node;
+				var keys = Object.keys(node);
+				if (keys.length > 1)
+					keys.forEach(function(key) {
+						console.log('key ', key);
+						if (key !== '$ref')
+							update[key] = node[key];
+					});
+				this.parent.update(update);
+			}
 		});
 		this.queue(JSON.stringify(data));
 		this.queue(null);

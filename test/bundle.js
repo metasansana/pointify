@@ -25,7 +25,7 @@ describe('bundle transform', function() {
 
 			must(result.data).to.be('{"name":"Lasana Murray",' +
 				'"address":{"street_address":"1600 Pennsylvania Avenue NW",' +
-				'"city":"Washington","state":"DC","type":"business"}}');
+				'"city":"Washington","state":"DC","type":"business","phone":"253-4444"}}');
 			done();
 		});
 
@@ -37,14 +37,14 @@ describe('bundle transform', function() {
 
 			if (err) return done(err);
 
-                        must(result.data).to.be(
-                          '{"owner":"Shaina Purple","addresses":'+
-                          '[{"street_address":"1600 Pennsylvania Avenue NW",'+
-                          '"city":"Washington","state":"DC","type":"business"},'+
-                          '{"street_address":"1600 Pennsylvania Avenue NW","city":"Washington",'+
-                          '"state":"DC","type":"business"},{"street_address":'+
-                          '"1600 Pennsylvania Avenue NW","city":"Washington","state":"DC",'+
-                          '"type":"business"}]}');
+			must(result.data).to.be(
+				'{"owner":"Shaina Purple","addresses":' +
+				'[{"street_address":"1600 Pennsylvania Avenue NW",' +
+				'"city":"Washington","state":"DC","type":"business"},' +
+				'{"street_address":"1600 Pennsylvania Avenue NW","city":"Washington",' +
+				'"state":"DC","type":"business"},{"street_address":' +
+				'"1600 Pennsylvania Avenue NW","city":"Washington","state":"DC",' +
+				'"type":"business"}]}');
 			done();
 		});
 	});
