@@ -49,5 +49,20 @@ describe('bundle transform', function() {
 		});
 	});
 
+	it('should work recursively', function(done) {
+
+		bundle(__dirname + '/../examples/splitPerson.json').bundle(function(err, src) {
+
+			if (err) return done(err);
+
+			must(result.data).to.be(                       '{"name":"Lasana Murray",'+
+                          '"alterEgo":{"name":"Lasana Murray","address":'+
+                          '{"street_address":"1600 Pennsylvania Avenue NW","city":"Washington",'+
+                          '"state":"DC","type":"business","phone":"253-4444"}}}');
+			done();
+		});
+
+	});
+
 
 });

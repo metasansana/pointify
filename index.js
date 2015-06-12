@@ -10,13 +10,8 @@ function pointify(file) {
 
 	var wd = path.dirname(file) + '/';
 
-	var write = function(buf) {
-		data += buf;
-	};
+	var marshall = function(data) {
 
-	var end = function() {
-
-		data = JSON.parse(data);
 		traverse(data).
 		forEach(function(value) {
 			if (this.key === '$ref') {
@@ -25,13 +20,24 @@ function pointify(file) {
 				var keys = Object.keys(node);
 				if (keys.length > 1)
 					keys.forEach(function(key) {
-						console.log('key ', key);
 						if (key !== '$ref')
 							update[key] = node[key];
 					});
-				this.parent.update(update);
+				this.parent.update(marshall(update));
 			}
 		});
+
+		return data;
+
+	};
+
+	var write = function(buf) {
+		data += buf;
+	};
+
+	var end = function() {
+
+		data = marshall(JSON.parse(data));
 		this.queue(JSON.stringify(data));
 		this.queue(null);
 
