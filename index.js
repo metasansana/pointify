@@ -9,13 +9,16 @@ function isJSON(file) {
 function pointify(file) {
 
 	var wd = path.dirname(file) + '/';
+	var data = '';
 
-	var marshall = function(data) {
+	var marshall = function(data, cwd) {
 
 		traverse(data).
 		forEach(function(value) {
 			if (this.key === '$ref') {
-				var update = JSON.parse(JSON.stringify(require(wd + value)));
+				var mod = cwd + value;
+				console.error('cwd ', mod, '****\n');
+				var update = JSON.parse(JSON.stringify(require(mod)));
 				var node = this.parent.node;
 				var keys = Object.keys(node);
 				if (keys.length > 1)
@@ -23,7 +26,8 @@ function pointify(file) {
 						if (key !== '$ref')
 							update[key] = node[key];
 					});
-				this.parent.update(marshall(update));
+
+				this.parent.update(marshall(update, path.dirname(mod) + '/'));
 			}
 		});
 
@@ -37,17 +41,14 @@ function pointify(file) {
 
 	var end = function() {
 
-		data = marshall(JSON.parse(data));
-		this.queue(JSON.stringify(data));
+		this.queue(JSON.stringify(marshall(JSON.parse(data), wd)));
 		this.queue(null);
 
 	};
 
-	var data = '';
-	var stream = through(write, end);
-
 	if (!isJSON(file)) return through();
 
-	return stream;
+
+	return through(write, end);
 }
 module.exports = pointify;
