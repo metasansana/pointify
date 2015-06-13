@@ -17,7 +17,6 @@ function pointify(file) {
 		forEach(function(value) {
 			if (this.key === '$ref') {
 				var mod = cwd + value;
-				console.error('cwd ', mod, '****\n');
 				var update = JSON.parse(JSON.stringify(require(mod)));
 				var node = this.parent.node;
 				var keys = Object.keys(node);
