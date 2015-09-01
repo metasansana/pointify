@@ -25,7 +25,7 @@
     "json-pointer",
     "json",
     "rfc-6901",
-    "transform"
-  ],
-  "license": "MIT"
+    "browserify-transform"
+    ],
+    "license": "MIT"
 }
