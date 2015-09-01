@@ -1,6 +1,6 @@
 {
   "name": "pointify",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A browserify plugin for json pointer support.",
   "main": "index.js",
   "dependencies": {
