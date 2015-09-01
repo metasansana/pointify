@@ -1,6 +1,6 @@
 {
   "name": "pointify",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "A browserify plugin for json pointer support.",
   "main": "index.js",
   "dependencies": {
@@ -26,6 +26,6 @@
     "json",
     "rfc-6901",
     "browserify-transform"
-    ],
-    "license": "MIT"
+  ],
+  "license": "MIT"
 }
