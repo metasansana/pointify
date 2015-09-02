@@ -11,13 +11,14 @@ function pointify(file, opts) {
 	var wd = path.dirname(file) + '/';
 	var data = '';
 
+	opts = opts || {};
+
 	var marshall = function(data, cwd, cb) {
 
 		traverse(data).
 		forEach(function(value) {
 
 			if (this.key === '$ref') {
-
 				var mod = value;
 				var update;
 				var paths;
@@ -29,7 +30,6 @@ function pointify(file, opts) {
 				try {
 					contents = require(mod);
 				} catch (e0) {
-
 					try {
 						mod = cwd + value;
 						contents = require(mod);
@@ -45,7 +45,7 @@ function pointify(file, opts) {
 							if (!foundInPaths) {
 								try {
 
-									mod = path + value;
+									mod = path + '/' + value;
 									contents = require(mod);
 									foundInPaths = true;
 
