@@ -11,7 +11,7 @@ function pointify(file) {
 	var wd = path.dirname(file) + '/';
 	var data = '';
 
-	var marshall = function(data, cwd) {
+	var marshall = function(data, cwd, cb) {
 
 		traverse(data).
 		forEach(function(value) {
@@ -26,11 +26,13 @@ function pointify(file) {
 							update[key] = node[key];
 					});
 
-				this.parent.update(marshall(update, path.dirname(mod) + '/'));
+				marshall(update, path.dirname(mod) + '/', function(data) {
+					this.parent.update(data);
+				}.bind(this));
 			}
 		});
 
-		return data;
+		return cb(data);
 
 	};
 
@@ -40,14 +42,17 @@ function pointify(file) {
 
 	var end = function() {
 
-		this.queue(JSON.stringify(marshall(JSON.parse(data), wd)));
-		this.queue(null);
+		marshall(JSON.parse(data), wd, function(data) {
+			this.queue(JSON.stringify(data));
+			this.queue(null);
+		}.bind(this));
+
 
 	};
 
 	if (!isJSON(file)) return through();
-
-
 	return through(write, end);
 }
+
 module.exports = pointify;
+
