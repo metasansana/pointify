@@ -87,7 +87,15 @@ function pointify(file, opts) {
 
 	var end = function() {
 
-		marshall(JSON.parse(data), wd, function(data) {
+          var obj;
+
+          try {
+             obj = JSON.parse(data);
+          }catch(e) {
+            throw new Error('Uncaught error while procesing '+file+': '+e.message);
+          }
+
+		marshall(obj, wd, function(data) {
 			this.queue(JSON.stringify(data));
 			this.queue(null);
 		}.bind(this));
