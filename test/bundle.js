@@ -19,7 +19,7 @@ describe('bundle transform', function() {
 		result = {};
 	});
 
-	xit('should work', function(done) {
+	it('should work', function(done) {
 
 		bundle(__dirname + '/../examples/person.json').bundle(function(err, src) {
 
@@ -33,7 +33,7 @@ describe('bundle transform', function() {
 
 	});
 
-	xit('should work with arrays', function(done) {
+	it('should work with arrays', function(done) {
 
 		bundle(__dirname + '/../examples/addressBook.json').bundle(function(err, src) {
 
@@ -51,7 +51,7 @@ describe('bundle transform', function() {
 		});
 	});
 
-	xit('should work recursively', function(done) {
+	it('should work recursively', function(done) {
 
 		bundle(__dirname + '/../examples/splitPerson.json').bundle(function(err, src) {
 
@@ -72,8 +72,8 @@ describe('bundle transform', function() {
 
 			if (err) return done(err);
 
-			must(result.data).to.be('{"name":"Lasana Murray",' +
-				'"paths":["x","y","z"]}');
+			must(result.data).to.be('{"values":{"name":"Lasana Murray",' +
+				'"paths":["x","y","z"]}}');
 			done();
 		});
 
