@@ -56,7 +56,8 @@ function pointify(file, opts) {
 
 						});
 
-						if (!foundInPaths) throw e1;
+						if (!foundInPaths) 
+                                                  throw new Error('Error occured while procesing '+file+': '+e1.message);
 
 					}
 
