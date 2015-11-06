@@ -1,112 +1,102 @@
 ﻿var through = require('through');
 var traverse = require('traverse');
-var path = require('path');
-
-function isJSON(file) {
-	return (/\.json$/).test(file);
-}
+var dirname = require('path').dirname;
+var fs = require('fs');
 
 function pointify(file, opts) {
 
-	var wd = path.dirname(file) + '/';
-	var data = '';
+    var data = '';
+    opts = opts || {};
 
-	opts = opts || {};
+    function is_json(file) {
+        return (/\.json$/).test(file);
+    }
 
-	var marshall = function(data, cwd, cb) {
+    function open(path) {
 
-		traverse(data).
-		forEach(function(value) {
+        try {
+            return fs.readFileSync(path);
+        } catch (e) {
+            return null;
+        }
 
-			if (this.key === '$ref') {
-				var mod = value;
-				var update;
-				var paths;
-				var foundInPaths = false;
-				var contents;
-				var node = this.parent.node;
-				var keys = Object.keys(node);
+    }
 
-				try {
-					contents = require(mod);
-				} catch (e0) {
-					try {
-						mod = cwd + value;
-						contents = require(mod);
-					} catch (e1) {
+    function get_file_contents(path, paths) {
 
-						if (!opts.paths) throw e1;
+        var buf;
+        var searched = path + '\n';
 
-						paths = (Array.isArray(opts.paths)) ?
-							opts.paths : [opts.paths];
+        buf = open(path);
+        buf = (buf) ? buf : open(dirname(file) + '/' + path);
 
-						paths.forEach(function(path) {
+        if (!buf)
+            paths.forEach(function(p) {
+                if (!buf) {
+                    buf = open(p + '/' + path);
+                    searched += p + '/' + path;
+                }
+            });
 
-							if (!foundInPaths) {
-								try {
+        if (!buf) throw new Error('Unable to locate ' + path + '! Searched in :\n' + searched);
+        return JSON.parse(buf.toString('utf8'));
 
-									mod = path + '/' + value;
-									contents = require(mod);
-									foundInPaths = true;
+    }
 
-								} catch (e2) {
+    function merge_keys(keys, o, node) {
+        if (keys.length > 1)
+            keys.forEach(function(key) {
+                if (key !== '$ref')
+                    o[key] = node[key];
+            });
+    }
 
-								}
-							}
+    function marshall(data, paths) {
 
-						});
+        traverse(data).
+        forEach(function(value) {
 
-						if (!foundInPaths) 
-                                                  throw new Error('Error occured while procesing '+mod+': '+e1.message);
+            if (this.key === '$ref') {
 
-					}
+                var contents;
+                var node = this.parent.node;
+                var keys = Object.keys(node);
 
+                paths = (paths) ? (Array.isArray(paths)) ?
+                    paths : [paths] : [];
 
-				}
+                contents = get_file_contents(value, paths);
+                merge_keys(keys, contents, node);
+                this.parent.update(marshall(contents, paths));
+            }
 
-				update = JSON.parse(JSON.stringify(contents));
+        });
+        return data;
 
-				if (keys.length > 1)
-					keys.forEach(function(key) {
-						if (key !== '$ref')
-							update[key] = node[key];
-					});
+    }
 
-				marshall(update, path.dirname(mod) + '/', function(data) {
-					this.parent.update(data);
-				}.bind(this));
-			}
-		});
+    function write(buf) {
+        data += buf;
+    }
 
-		return cb(data);
+    function end() {
 
-	};
+        var obj;
 
-	var write = function(buf) {
-		data += buf;
-	};
+        try {
+            obj = JSON.parse(data);
+        } catch (e) {
+            throw new Error('Error while procesing ' + file + ': ' + e.message + '\n Contents:\n' + data);
+        }
 
-	var end = function() {
+        this.queue(String(JSON.stringify(marshall(obj, opts.paths || []))));
+        this.queue(null);
 
-          var obj;
+    }
 
-          try {
-             obj = JSON.parse(data);
-          }catch(e) {
-            throw new Error('Uncaught error while procesing '+file+': '+e.message);
-          }
+    if (!is_json(file)) return through();
+    return through(write, end);
 
-		marshall(obj, wd, function(data) {
-			this.queue(JSON.stringify(data));
-			this.queue(null);
-		}.bind(this));
-
-
-	};
-
-	if (!isJSON(file)) return through();
-	return through(write, end);
 }
 
 module.exports = pointify;
-
