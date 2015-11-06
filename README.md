@@ -1,6 +1,8 @@
 #  [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][daviddm-url]][daviddm-image]
 
-> A browserify transform that resolves json pointers.
+> ~A browserify transform that resolves json pointers.~
+> A browserify transform that allows you to bundle json files inside other json files.
+Very loosely based on [RFC 6901](https://tools.ietf.org/html/rfc6901)
 
 ## Install
 
@@ -27,6 +29,9 @@ var someJSONFile = require('./someJSONFile');
 //In some json file
 {"owner": {"$ref":"owner.json"}
 
+//or alternatively embed the $ref in a string (not part of the rfc)
+{"owner":"$ref owner.json"}
+
 //owner.json
 {"name":"Gus"}
 
@@ -34,14 +39,20 @@ var someJSONFile = require('./someJSONFile');
 
 ##Notes
 
-Read up on [RFC6901](https://tools.ietf.org/html/rfc6901) before you use this transform. There is a nice
+Check out [RFC6901](https://tools.ietf.org/html/rfc6901) before you use this transform. There is a nice
 example of its benefits [here](http://spacetelescope.github.io/understanding-json-schema/structuring.html) in relation to json schema.
 
-This transform only deals with references expected to be in other files at the moment.
-Full support for in document schema is planned.
+~This transform only deals with references expected to be in other files at the moment.
+Full support for in document schema is planned.~
 
-All it does is require the json file and place it into the document. The requires are relative
-to the document calling require.
+After using this on a project I no longer really see a need to support json pointer's syntax, 
+doing so in a browserify transform seems like a lot of worth with little benifit. Maybe someday as
+an experiment, for now this transform is useful if you use what to have browserify combine
+some json files on your behalf.
+
+All it does is require the json file and place it into the document. ~The requires are relative
+to the document calling require.~ No longer uses requires, it will load the contents of the file
+and parse them into JSON.
 
 ## License
 
