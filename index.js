@@ -2,6 +2,7 @@
 var traverse = require('traverse');
 var dirname = require('path').dirname;
 var fs = require('fs');
+var starts_with = require('lodash.startswith');
 
 function pointify(file, opts) {
 
@@ -56,21 +57,34 @@ function pointify(file, opts) {
         traverse(data).
         forEach(function(value) {
 
-            if (this.key === '$ref') {
+            var contents;
+            var isObject = (this.key === '$ref');
+            var isString = starts_with(value, '$ref ');
+            var shouldProcess = (isObject || isString);
+            var self = this;
 
-                var contents;
-                var node = this.parent.node;
-                var keys = Object.keys(node);
+            paths = (paths) ? (Array.isArray(paths)) ?
+                paths : [paths] : [];
 
-                paths = (paths) ? (Array.isArray(paths)) ?
-                    paths : [paths] : [];
-
-                contents = get_file_contents(value, paths);
-                merge_keys(keys, contents, node);
-                this.parent.update(marshall(contents, paths));
+            if (isString) {
+                value = value.split(' ');
+                value.shift();
+                value = value.join('');
             }
 
+            if (shouldProcess)
+                contents = get_file_contents(value, paths);
+
+            if (isObject) {
+                merge_keys(Object.keys(this.parent.node), contents, this.parent.node);
+self = this.parent;
+            }
+
+            if (shouldProcess)
+                self.update(marshall(contents, paths));
+
         });
+
         return data;
 
     }

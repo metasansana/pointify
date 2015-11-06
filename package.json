@@ -9,6 +9,7 @@
   },
   "devDependencies": {
     "browserify": "^9.0.8",
+    "lodash.startswith": "^3.0.1",
     "mocha": "^2.2.5",
     "must": "^0.12.0"
   },
