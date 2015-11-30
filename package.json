@@ -5,11 +5,11 @@
   "main": "index.js",
   "dependencies": {
     "through": "^2.3.7",
+    "lodash.startswith": "^3.0.1",
     "traverse": "^0.6.6"
   },
   "devDependencies": {
     "browserify": "^9.0.8",
-    "lodash.startswith": "^3.0.1",
     "mocha": "^2.2.5",
     "must": "^0.12.0"
   },
