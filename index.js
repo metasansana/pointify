@@ -27,20 +27,28 @@ function pointify(file, opts) {
 
         var buf;
         var searched = path + '\n';
+        var foundDir = dirname(file) + '/' + path;
 
         buf = open(path);
-        buf = (buf) ? buf : open(dirname(file) + '/' + path);
+        buf = (buf) ? buf : open(foundDir);
+        foundDir = dirname(foundDir);
 
         if (!buf)
             paths.forEach(function(p) {
                 if (!buf) {
                     buf = open(p + '/' + path);
-                    searched += p + '/' + path;
+                    searched += p + '\n';
+                    if (buf) foundDir = dirname(p + '/' + path);
                 }
             });
 
-        if (!buf) throw new Error('Unable to locate ' + path + '! Searched in :\n' + searched);
-        return JSON.parse(buf.toString('utf8'));
+        if (!buf) throw new Error('Unable to locate ' +
+            path + ' (started processing from: ' + file + ')!\n' + 'Searched in :\n' + searched + '\nEND');
+
+        return {
+            dir: foundDir,
+            contents: JSON.parse(buf.toString('utf8'))
+        };
 
     }
 
@@ -57,7 +65,8 @@ function pointify(file, opts) {
         traverse(data).
         forEach(function(value) {
 
-            var contents;
+            var results;
+            var passedPaths;
             var isObject = (this.key === '$ref');
             var isString = starts_with(value, '$ref ');
             var shouldProcess = (isObject || isString);
@@ -73,15 +82,19 @@ function pointify(file, opts) {
             }
 
             if (shouldProcess)
-                contents = get_file_contents(value, paths);
+                results = get_file_contents(value, paths);
 
             if (isObject) {
-                merge_keys(Object.keys(this.parent.node), contents, this.parent.node);
-self = this.parent;
+                merge_keys(Object.keys(this.parent.node),
+                    results.contents, this.parent.node);
+                self = this.parent;
             }
 
-            if (shouldProcess)
-                self.update(marshall(contents, paths));
+            if (shouldProcess) {
+                passedPaths = paths.slice();
+                passedPaths.push(results.dir);
+                self.update(marshall(results.contents, passedPaths));
+            }
 
         });
 
